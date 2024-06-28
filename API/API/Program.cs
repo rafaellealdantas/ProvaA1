@@ -73,10 +73,6 @@ app.MapGet("/tarefas/concluidas", ([FromServices] AppDataContext ctx) =>
     //Implementar a listagem de tarefas concluídas
 });
 
-
-
-
-
 // PATCH: http://localhost:5273/tarefas/alterar/{id}
 app.MapPatch("/tarefas/alterar/{id}", ([FromServices] AppDataContext ctx, [FromRoute] string id) =>
 {
@@ -106,12 +102,6 @@ app.MapPatch("/tarefas/alterar/{id}", ([FromServices] AppDataContext ctx, [FromR
     return Results.Ok(tarefa);
 });
 
-
-
-
-
-
-
 // GET: http://localhost:5273/tarefas/naoconcluidas
 app.MapGet("/tarefas/naoconcluidas", ([FromServices] AppDataContext ctx) =>
 {
@@ -126,12 +116,6 @@ app.MapGet("/tarefas/naoconcluidas", ([FromServices] AppDataContext ctx) =>
     return Results.NotFound("Nenhuma tarefa não concluída encontrada");
 });
 
-
-
-
-
-
-
 // GET: http://localhost:5273/tarefas/concluidas
 app.MapGet("/tarefas/concluidas", ([FromServices] AppDataContext ctx) =>
 {
@@ -145,23 +129,6 @@ app.MapGet("/tarefas/concluidas", ([FromServices] AppDataContext ctx) =>
     }
     return Results.NotFound("Nenhuma tarefa concluída encontrada");
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // GET: http://localhost:5273/pages/tarefa/listar
 app.MapGet("/pages/tarefa/listar", ([FromServices] AppDataContext ctx) =>
