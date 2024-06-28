@@ -1,3 +1,4 @@
+
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -74,11 +75,101 @@ app.MapGet("/tarefas/concluidas", ([FromServices] AppDataContext ctx) =>
 
 
 
+
+
+// PATCH: http://localhost:5273/tarefas/alterar/{id}
+app.MapPatch("/tarefas/alterar/{id}", ([FromServices] AppDataContext ctx, [FromRoute] string id) =>
+{
+    var tarefa = ctx.Tarefas.Find(id);
+    if (tarefa == null)
+    {
+        return Results.NotFound("Tarefa não encontrada");
+    }
+
+    // Alterar o status da tarefa
+    switch (tarefa.Status)
+    {
+        case "Não iniciada":
+            tarefa.Status = "Em andamento";
+            break;
+        case "Em andamento":
+            tarefa.Status = "Concluída";
+            break;
+        case "Concluída":
+            return Results.BadRequest("A tarefa já foi concluída");
+        default:
+            return Results.BadRequest("Status inválido da tarefa");
+    }
+
+    ctx.Tarefas.Update(tarefa);
+    ctx.SaveChanges();
+    return Results.Ok(tarefa);
+});
+
+
+
+
+
+
+
+// GET: http://localhost:5273/tarefas/naoconcluidas
+app.MapGet("/tarefas/naoconcluidas", ([FromServices] AppDataContext ctx) =>
+{
+    var tarefasNaoConcluidas = ctx.Tarefas
+        .Where(t => t.Status == "Não iniciada" || t.Status == "Em andamento")
+        .ToList();
+
+    if (tarefasNaoConcluidas.Any())
+    {
+        return Results.Ok(tarefasNaoConcluidas);
+    }
+    return Results.NotFound("Nenhuma tarefa não concluída encontrada");
+});
+
+
+
+
+
+
+
+// GET: http://localhost:5273/tarefas/concluidas
+app.MapGet("/tarefas/concluidas", ([FromServices] AppDataContext ctx) =>
+{
+    var tarefasConcluidas = ctx.Tarefas
+        .Where(t => t.Status == "Concluída")
+        .ToList();
+
+    if (tarefasConcluidas.Any())
+    {
+        return Results.Ok(tarefasConcluidas);
+    }
+    return Results.NotFound("Nenhuma tarefa concluída encontrada");
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // GET: http://localhost:5273/pages/tarefa/listar
 app.MapGet("/pages/tarefa/listar", ([FromServices] AppDataContext ctx) =>
 {
     var tarefas = ctx.Tarefas.Include(t => t.Categoria).ToList(); // Inclui a categoria relacionada
     return Results.Ok(tarefas);
 });
+
+
 
 app.Run();
